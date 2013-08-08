@@ -3,16 +3,19 @@
 
 using System;
 using System.Net;
+using System.Web;
 using System.Threading;
 using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
-using Microsoft.Phone.Info;
-using Microsoft.Phone.Net.NetworkInformation;
 using System.Globalization;
 using System.Windows;
 
+#if WINDOWS_PHONE
+using Microsoft.Phone.Info;
+using Microsoft.Phone.Net.NetworkInformation;
 using OpenUDIDPhone;
+#endif
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -21,7 +24,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Countly
 {
-    public class Countly
+    public partial class Countly
     {
         private static Countly sharedInstance;
         private Timer timer;
@@ -34,14 +37,9 @@ namespace Countly
 
         private Timer EventTimer;
 
-        public static Countly SharedInstance()
+        public static Countly SharedInstance
         {
-            if (null == sharedInstance)
-            {
-                sharedInstance = new Countly();
-            }
-
-            return sharedInstance;
+			get{ return sharedInstance ?? (sharedInstance = new Countly ()); }
         }
 
         private Countly()
@@ -71,11 +69,12 @@ namespace Countly
                 Timeout.Infinite);
         }
 
-        public void init(string serverURL, string appKey, string appVersion)
+        public void init(string serverURL, string appKey)
         {
             queue.setServerURL(serverURL);
             queue.setAppKey(appKey);
-            queue.AppVersion = appVersion;
+            queue.AppVersion = DeviceInfo.Shared.AppVersion;
+			OnStart ();
         }
 
         public void OnStart()
@@ -200,10 +199,10 @@ namespace Countly
         {
             string data;
             data = "app_key=" + AppKey;
-            data += "&" + "device_id=" + DeviceInfo.getUDID();
+			data += "&" + "device_id=" + DeviceInfo.Shared.UDID;
             data += "&" + "sdk_version=" + "1.0";
             data += "&" + "begin_session=" + "1";
-            data += "&" + "metrics=" + DeviceInfo.getMetrics(AppVersion);
+			data += "&" + "metrics=" + DeviceInfo.Shared.Metrics;
 
             queue.Enqueue(data);
 
@@ -214,7 +213,7 @@ namespace Countly
         {
             string data;
             data = "app_key=" + AppKey;
-            data += "&" + "device_id=" + DeviceInfo.getUDID();
+			data += "&" + "device_id=" + DeviceInfo.Shared.UDID;
             data += "&" + "session_duration=" + duration;
 
             queue.Enqueue(data);
@@ -226,7 +225,7 @@ namespace Countly
         {
             string data;
             data = "app_key=" + AppKey;
-            data += "&" + "device_id=" + DeviceInfo.getUDID();
+			data += "&" + "device_id=" + DeviceInfo.Shared.UDID;
             data += "&" + "end_session=" + "1";
             data += "&" + "session_duration=" + duration;
 
@@ -310,7 +309,7 @@ namespace Countly
         {
             string data = "";
             data += "app_key=" + AppKey;
-            data += "&" + "device_id=" + DeviceInfo.getUDID();
+			data += "&" + "device_id=" + DeviceInfo.Shared.UDID;
             data += "&" + "events=" + HttpUtility.UrlEncode(JsonConvert.SerializeObject(Events, Formatting.None, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore, ContractResolver = new CamelCasePropertyNamesContractResolver() }));
 
             //bool First1 = true;
@@ -385,7 +384,7 @@ namespace Countly
                                     Data = queue.Peek();
 
                                     ManualResetEvent WaitForResponce = new ManualResetEvent(false);
-                                    HttpWebRequest Request = WebRequest.CreateHttp(ServerURL + "/i?" + Data);
+                                    HttpWebRequest Request = (HttpWebRequest)WebRequest.Create(ServerURL + "/i?" + Data);
                                     Exception InnerException = null;
 
                                     Request.BeginGetResponse(new AsyncCallback((Async) =>
@@ -527,134 +526,4 @@ namespace Countly
         }
     }
 
-    public class DeviceInfo
-    {
-        public static string getUDID()
-        {
-            return OpenUDID.value;
-        }
-
-        public static string getOS()
-        {
-            return "Windows Phone";
-        }
-
-        public static string getOSVersion()
-        {
-            return Environment.OSVersion.Version.ToString();
-        }
-
-        public static string getDevice()
-        {
-            return DeviceStatus.DeviceName;
-        }
-
-        public static string getResolution()
-        {
-            int ScaleFactor = 0;
-            double LogicalWidth = 0.0;
-            double LogicalHeight = 0.0;
-
-            if (Environment.OSVersion.Version.Major < 8.0)
-            {
-                return "800x480";
-            }
-
-            if (Deployment.Current.Dispatcher.CheckAccess())
-            {
-#if WP8
-                ScaleFactor = Application.Current.Host.Content.ScaleFactor;
-#else
-                ScaleFactor = (int)Application.Current.Host.Content.GetType().GetProperty("ScaleFactor").GetGetMethod().Invoke(Application.Current.Host.Content, null);
-#endif
-            }
-            else
-            {
-                ManualResetEvent Continue = new ManualResetEvent(false);
-                Deployment.Current.Dispatcher.BeginInvoke(() =>
-                    {
-#if WP8
-                        ScaleFactor = Application.Current.Host.Content.ScaleFactor;
-#else
-                        ScaleFactor = (int)Application.Current.Host.Content.GetType().GetProperty("ScaleFactor").GetGetMethod().Invoke(Application.Current.Host.Content, null);
-#endif
-                        LogicalWidth = Application.Current.Host.Content.ActualWidth;
-                        LogicalHeight = Application.Current.Host.Content.ActualHeight;
-
-                        Continue.Set();
-                    });
-                Continue.WaitOne();
-            }
-
-            double Scale = (double)ScaleFactor / 100;
-
-            return (LogicalHeight * Scale).ToString("F0") + "x" + (LogicalWidth * Scale).ToString("F0");
-
-            //switch (ScaleFactor)
-            //{
-            //    case 100:
-            //        return "800x480";
-
-            //    case 150:
-            //        return "1280x720";
-
-            //    case 160:
-            //        return "1280x768";
-
-            //    default:
-            //        return "???";
-            //}
-        }
-
-        public static string getCarrier()
-        {
-            return DeviceNetworkInformation.CellularMobileOperator;
-        }
-
-        public static string getLocal()
-        {
-            return CultureInfo.CurrentCulture.Name;
-        }
-
-        private class Metrics
-        {
-            public String _device { get; set; }
-            public String _os { get; set; }
-            public String _os_version { get; set; }
-            public String _carrier { get; set; }
-            public String _resolution { get; set; }
-            //public String _local { get; set; }
-            public String _app_version { get; set; }
-
-            public Metrics()
-            {
-                _device = getDevice();
-                _os = getOS();
-                _os_version = getOSVersion();
-                _carrier = getCarrier();
-                _resolution = getResolution();
-                //_local = getLocal();
-            }
-        }
-
-        public static string getMetrics(string AppVersion = null)
-        {
-            string output;
-
-            //output = "{";
-            //output +=       "\"" + "_device" +     "\"" + ":" + "\"" + getDevice() +       "\"";
-            //output += "," + "\"" + "_os" +          "\"" + ":" + "\"" + getOS() +           "\"";
-            //output += "," + "\"" + "_os_version" +  "\"" + ":" + "\"" + getOSVersion() +    "\"";
-            //output += "," + "\"" + "_carrier" +     "\"" + ":" + "\"" + getCarrier() +      "\"";
-            //output += "," + "\"" + "_resolution" +  "\"" + ":" + "\"" + getResolution() +   "\"";
-            //output += "," + "\"" + "_local" +       "\"" + ":" + "\"" + getLocal() +        "\"";
-            //output += "}";
-
-            output = JsonConvert.SerializeObject(new Metrics() { _app_version = AppVersion }, Formatting.None, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
-
-            //output = HttpUtility.UrlEncode(output);
-
-            return output;
-        }
-    }
 }
