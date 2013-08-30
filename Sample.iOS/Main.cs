@@ -26,9 +26,9 @@ namespace Sample.iOS
 		public override void SendEvent (UIEvent theEvent)
 		{
 		
-			Console.WriteLine (theEvent);
-			
-			Console.WriteLine (theEvent.Subtype);
+//			Console.WriteLine (theEvent);
+//			
+//			Console.WriteLine (theEvent.Subtype);
 //			if (theEvent.Type == UIEventType.RemoteControl) {
 //
 //				Console.WriteLine (theEvent.Subtype);

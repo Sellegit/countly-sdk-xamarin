@@ -13,11 +13,11 @@ namespace Countly
 		public void Init()
 		{
 			DeviceName = DeviceHardware.DeviceVersion;
-			UDID = (ASIdentifierManager.SharedManager.AdvertisingIdentifier as NSUuid).AsString();
 			OS = "iOS";
 			OSVersion = UIDevice.CurrentDevice.SystemVersion;
 			var prov = new CTTelephonyNetworkInfo ().SubscriberCellularProvider;
 			Carrier =  prov == null ? "Unknown" :  prov.CarrierName;
+			UDID = GetUid ();
 
 			var bounds = UIScreen.MainScreen.Bounds;
 			var scale = UIScreen.MainScreen.Scale;
@@ -30,6 +30,19 @@ namespace Countly
 
 			Metrics = getMetrics ();
 
+		}
+
+		string GetUid()
+		{
+			var verson = Version.Parse (UIDevice.CurrentDevice.SystemVersion);
+			if(verson.Major >= 6)
+				return (ASIdentifierManager.SharedManager.AdvertisingIdentifier as NSUuid).AsString();
+			try{
+			return OpenUDID.Value;
+			}
+			catch(Exception ex) {
+				return "";
+			}
 		}
 	}
 

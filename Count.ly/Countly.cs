@@ -1,5 +1,3 @@
-//Uncomment this so the library can make use of Windows Phone 8 API's
-//#define WP8
 
 using System;
 using System.Net;
@@ -11,16 +9,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 
-#if WINDOWS_PHONE
-using Microsoft.Phone.Info;
-using Microsoft.Phone.Net.NetworkInformation;
-using OpenUDIDPhone;
-#endif
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 // Please see http://support.count.ly/kb/reference/countly-server-api-reference
+using System.IO.IsolatedStorage;
 
 namespace Countly
 {
@@ -98,7 +91,7 @@ namespace Countly
             unsentSessionLength -= duration;
         }
 
-        public void PostEvent(CountlyEvent Event, int TimeoutTime = 30000)
+        public void PostEvent(CountlyEvent Event, int TimeoutTime = 300)
         {
             if (Event == null)
             {
@@ -140,6 +133,7 @@ namespace Countly
             public CountlyEvent()
             {
                 Key = "";
+				Count = 1;
                 //UsingSum = false;
                 //UsingSegmentation = false;
             }
@@ -178,7 +172,7 @@ namespace Countly
 
     public class ConnectionQueue
     {
-        private volatile Queue<string> queue = new Queue<string>();
+		private volatile PersistantQueue<string> queue = new PersistantQueue<string>();
         public Thread thread;
         //private volatile bool StopThread = false;
         private string AppKey;
@@ -192,7 +186,7 @@ namespace Countly
 
         public void setServerURL(string input)
         {
-            ServerURL = input;
+            ServerURL = input.TrimEnd('/');
         }
 
         public void beginSession()

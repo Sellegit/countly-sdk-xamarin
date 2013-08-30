@@ -7,10 +7,17 @@ namespace Sample.iOS
 	{
 		public MainViewController ()
 		{
-		}
-		public override void LoadView ()
-		{
-			View = new MainView ();
+			var button = new UIButton (UIButtonType.RoundedRect);
+			button.SetTitle ("Test Button", UIControlState.Normal);
+			button.SizeToFit ();
+			button.TouchUpInside += (object sender, EventArgs e) => {
+				var t = int.Parse(Title) + 1;
+				this.NavigationController.PushViewController(new MainViewController(){
+					Title = t.ToString(),
+				},true);
+			};
+			this.Title = "0";
+			this.View.AddSubview (button);
 		}
 	}
 
@@ -20,10 +27,7 @@ namespace Sample.iOS
 		public UILabel UILabel;
 		public MainView()
 		{
-			button = new UIButton (UIButtonType.RoundedRect);
-			button.SetTitle ("Test Button", UIControlState.Normal);
-			button.SizeToFit ();
-			this.AddSubview (button);
+
 		}
 	}
 }

@@ -23,21 +23,40 @@ namespace Sample.iOS
 		//
 		public override bool FinishedLaunching (UIApplication app, NSDictionary options)
 		{
+			Countly.Countly.SharedInstance.init ("http://countly.gmusicapp.com/", "dd6d7130db7f0f0143e7a44d202c8e7d2fd49125");
+			NSNotificationCenter.DefaultCenter.AddObserver (null, (notifiction) => {
+				Console.WriteLine(notifiction.Name);
+			});
+			NSNotificationCenter.DefaultCenter.AddObserver ("UINavigationControllerDidShowViewControllerNotification", (notifiction) => {
+				var vc = notifiction.UserInfo["UINavigationControllerNextVisibleViewController"] as UIViewController;
+				Countly.Countly.SharedInstance.PostEvent(new Countly.Countly.CountlyEvent{
+					Key = "Page View",
+					Count = 1,
+					Segmentation = new Dictionary<string,string>{
+						{"VC Type",vc.GetType().Name},
+						{"Page Title",vc.Title},
+					},
+				});
+				Console.WriteLine(vc.Title);
+			});
 			// create a new window instance based on the screen size
 			window = new UIWindow (UIScreen.MainScreen.Bounds);
 
-			Countly.Countly.SharedInstance.init ("https://cloud.count.ly", "b63753625c3ff1399e9a1e797b96bec2b872715c");
 			// If you have defined a root view controller, set it here:
 			// window.RootViewController = myViewController;
-			window.RootViewController = new MainViewController ();
+			window.RootViewController = new UINavigationController( new MainViewController ());
 			// make the window visible
 			window.MakeKeyAndVisible ();
-			
+
 			return true;
 		}
 		public override void WillEnterForeground (UIApplication application)
 		{
 			Countly.Countly.SharedInstance.OnStart ();
+		}
+		public override void DidEnterBackground (UIApplication application)
+		{
+			Countly.Countly.SharedInstance.OnStop ();
 		}
 	}
 }
