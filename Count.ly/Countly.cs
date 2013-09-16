@@ -44,8 +44,8 @@ namespace Countly
                     OnTimer();
                 }), 
                 null,
-                30 * 1000,
-                30 * 1000);
+                120 * 1000,
+                120 * 1000);
             isVisible = false;
             unsentSessionLength = 0;
 

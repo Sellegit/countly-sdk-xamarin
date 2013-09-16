@@ -19,27 +19,45 @@ namespace Countly
 		
 		private void LoadState()
 		{
-			
-			using (var myIsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication()) {
-				using (var stream = myIsolatedStorage.OpenFile("countly-state", FileMode.OpenOrCreate)) {
+			try
+			{
+				using (var myIsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication())
+				{
+					using (var stream = myIsolatedStorage.OpenFile("countly-state", FileMode.OpenOrCreate))
 					{
-						var formatter = new BinaryFormatter ();
-						queue = stream.Length > 0 ?  (Queue<T>)formatter.Deserialize (stream) : new Queue<T>();
-						Console.WriteLine ("Items to be synced:{0}", queue.Count);
+						{
+							var formatter = new BinaryFormatter();
+							queue = stream.Length > 0 ? (Queue<T>) formatter.Deserialize(stream) : new Queue<T>();
+							Console.WriteLine("Items to be synced:{0}", queue.Count);
+						}
 					}
 				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex);
+				queue = new Queue<T>();
 			}
 		}
 
 		private void SaveState()
 		{
-			using (var myIsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication())
+			try
 			{
-				using (var stream = myIsolatedStorage.OpenFile("countly-state", FileMode.Create)) {
-					var formatter = new BinaryFormatter();
-					formatter.Serialize(stream, queue);
-					stream.Close ();
+				using (var myIsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication())
+				{
+					using (var stream = myIsolatedStorage.OpenFile("countly-state", FileMode.Create))
+					{
+						var formatter = new BinaryFormatter();
+						formatter.Serialize(stream, queue);
+						stream.Close();
+					}
 				}
+			}
+			catch (Exception ex)
+			{
+
+				Console.WriteLine(ex);
 			}
 		}
 
