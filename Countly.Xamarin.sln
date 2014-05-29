@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Countly.iOS", "Count.ly\Countly.iOS.csproj", "{F333121A-429B-44F5-B0C5-1CFB6B6999B8}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Countly.Core", "Countly.Core\Countly.Core.shproj", "{A4BB851A-6AD7-4FE6-A884-71D86C8AE566}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.iOS", "Sample.iOS\Sample.iOS.csproj", "{40B5BC0C-020D-4079-8477-591D439CB53A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Targets", "Targets", "{A93D5A49-25BB-4A6E-B592-CBCBD6DB4FE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Countly.iOS", "Targets\Countly.iOS\Countly.iOS.csproj", "{F333121A-429B-44F5-B0C5-1CFB6B6999B8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{C96C6857-203E-4C47-AFE2-404ED49BBE4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.iOS", "Samples\Sample.iOS\Sample.iOS.csproj", "{40B5BC0C-020D-4079-8477-591D439CB53A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,7 +56,11 @@ Global
 		{F333121A-429B-44F5-B0C5-1CFB6B6999B8}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{F333121A-429B-44F5-B0C5-1CFB6B6999B8}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F333121A-429B-44F5-B0C5-1CFB6B6999B8} = {A93D5A49-25BB-4A6E-B592-CBCBD6DB4FE3}
+		{40B5BC0C-020D-4079-8477-591D439CB53A} = {C96C6857-203E-4C47-AFE2-404ED49BBE4E}
+	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Sample.iOS\Sample.iOS.csproj
+		StartupItem = Samples\Sample.iOS\Sample.iOS.csproj
 	EndGlobalSection
 EndGlobal
