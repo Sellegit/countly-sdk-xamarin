@@ -58,24 +58,6 @@ namespace Countly
 		// make sure to add a 'using System.Runtime.InteropServices;' line to your file
 		public const string HardwareProperty = "hw.machine";
 
-		public enum HardwareVersion
-		{
-			iPhone1G,
-			iPhone2G,
-			iPhone3G,
-			iPhone4,
-			iPhone5,
-			iPod1G,
-			iPod2G,
-			iPod3G,
-			iPod4G,
-			iPod5G,
-			iPad,
-			iPad2,
-			Simulator,
-			Unknown
-		}
-
 		[DllImport(Constants.SystemLibrary)]
 		internal static extern int sysctlbyname([MarshalAs(UnmanagedType.LPStr)] string property, // name of the property
 		                                        IntPtr output, // output
@@ -99,7 +81,7 @@ namespace Countly
 				if (length == 0)
 				{
 					Marshal.FreeHGlobal(pLen);
-					return HardwareVersion.Unknown.ToString();
+					return "Unknown";
 				}
 
 
@@ -113,52 +95,6 @@ namespace Countly
 				Marshal.FreeHGlobal(pLen);
 				Marshal.FreeHGlobal(pStr);
 				return hardwareStr;
-			}
-		}
-		public static HardwareVersion Version
-		{
-			get
-			{
-
-				var hardwareStr = DeviceVersion;
-				
-				var ret = HardwareVersion.Unknown;
-				#if DEBUG
-				Console.WriteLine(hardwareStr);
-				#endif
-
-				// determine which hardware we are running
-				if (hardwareStr == "iPhone1,1")
-					ret = HardwareVersion.iPhone1G;
-				else if (hardwareStr == "iPhone1,2")
-					ret = HardwareVersion.iPhone2G;
-				else if (hardwareStr == "iPhone2,1")
-					ret = HardwareVersion.iPhone3G;
-				else if (hardwareStr == "iPhone3,1")
-					ret = HardwareVersion.iPhone4;
-				else if(hardwareStr == "iPhone4,1")
-					ret = HardwareVersion.iPhone5;
-				else if (hardwareStr == "iPod1,1")
-					ret = HardwareVersion.iPod1G;
-				else if (hardwareStr == "iPod2,1")
-					ret = HardwareVersion.iPod2G;
-				else if (hardwareStr == "iPod3,1")
-					ret = HardwareVersion.iPod3G;
-				else if (hardwareStr == "iPod4,1")
-					ret = HardwareVersion.iPod4G;
-				else if (hardwareStr == "iPad1,1")
-					ret = HardwareVersion.iPad;
-				else if (hardwareStr == "iPad2,1")
-					ret = HardwareVersion.iPad2;
-				else if (hardwareStr == "iPad2,2")
-					ret = HardwareVersion.iPad2;
-				else if (hardwareStr == "iPad2,3")
-					ret = HardwareVersion.iPad2;
-				else if (hardwareStr == "i386")
-					ret = HardwareVersion.Simulator;
-
-
-				return ret;
 			}
 		}
 	}
