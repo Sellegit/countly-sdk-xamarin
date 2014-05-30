@@ -64,23 +64,23 @@ namespace Countly
                 Timeout.Infinite);
         }
 
-		#if __ANDROID__
+#if __ANDROID__
 		public void init(Context context, string serverURL, string appKey)
 		{
 			queue.setServerURL(serverURL);
 			queue.setAppKey(appKey);
 			queue.setDeviceInfo(context);
 		}
-		#endif
+#endif
 
-		#if __IOS__
+#if __IOS__
         public void init(string serverURL, string appKey)
         {
             queue.setServerURL(serverURL);
             queue.setAppKey(appKey);
 			queue.setDeviceInfo();
         }
-		#endif
+#endif
 
         public void OnStart()
         {
@@ -146,8 +146,6 @@ namespace Countly
             {
                 Key = "";
 				Count = 1;
-                //UsingSum = false;
-                //UsingSegmentation = false;
             }
 
             /// <summary>
@@ -252,78 +250,6 @@ namespace Countly
 
             queue.Enqueue(data);
             Tick();
-
-            //ManualResetEvent Restart = new ManualResetEvent(false);
-
-            //ThreadPool.QueueUserWorkItem((o) =>
-            //    {
-            //        HttpWebRequest Request = WebRequest.CreateHttp(ServerURL + "/i?" + data);
-
-            //        Request.BeginGetResponse(new AsyncCallback((Async) =>
-            //            {
-            //                HttpWebResponse Responce = (HttpWebResponse)((HttpWebRequest)Async.AsyncState).EndGetResponse(Async);
-            //                String s = (new StreamReader(Responce.GetResponseStream())).ReadToEnd();
-            //                Restart.Set();
-            //            }), Request);
-            //    });
-            //Restart.WaitOne();
-
-            //Tick();
-            //thread.Join();
-            /*
-            StopThread = true;
-            if (null != thread && ThreadState.Unstarted != thread.ThreadState)
-            {
-                thread.Join();
-            }
-
-            ManualResetEvent Continue = new ManualResetEvent(false);
-
-            foreach (String CurrentQuery in queue)
-            {
-                try
-                {
-                    WebClient Downloader = new WebClient();
-                    Downloader.OpenReadCompleted += new OpenReadCompletedEventHandler((object sender, OpenReadCompletedEventArgs args) =>
-                        {
-                            try
-                            {
-                                if (null != args.Error)
-                                {
-                                    throw args.Error;
-                                }
-
-#if (DEBUG)
-                                Debug.WriteLine("Countly:\t" + "ok -> " + CurrentQuery);
-#endif
-                            }
-                            catch (Exception E)
-                            {
-                            }
-                            finally
-                            {
-                                if (null != args.Result)
-                                {
-                                    args.Result.Close();
-                                }
-
-                                Continue.Set();
-                            }
-                        });
-                    Downloader.OpenReadAsync(new Uri(ServerURL + "/i?" + CurrentQuery, UriKind.Absolute));
-                    Continue.WaitOne();
-                }
-                catch (Exception E)
-                {
-#if (DEBUG)
-#endif
-                }
-                finally
-                {
-                    Continue.Reset();
-                }
-            }
-            */
         }
 
         public void QueueEvents(List<Countly.CountlyEvent> Events)
@@ -332,51 +258,6 @@ namespace Countly
             data += "app_key=" + AppKey;
 			data += "&" + "device_id=" + deviceInfo.UDID;
             data += "&" + "events=" + HttpUtility.UrlEncode(JsonConvert.SerializeObject(Events, Formatting.None, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore, ContractResolver = new CamelCasePropertyNamesContractResolver() }));
-
-            //bool First1 = true;
-            //foreach(Countly.CountlyEvent CurrentEvent in Events)
-            //{
-            //    if (First1)
-            //    {
-            //        First1 = false;
-            //    }
-            //    else
-            //    {
-            //        data += ",";
-            //    }
-            //    data += "{";
-            //    data += "\"" + "key" + "\"" + ":" + "\"" + CurrentEvent.Key + "\"" + ",";
-            //    data += "\"" + "count" + "\"" + ":" + CurrentEvent.Count;
-            //    if (CurrentEvent.UsingSum)
-            //    {
-            //        data += ",";
-            //        data += "\"" + "sum" + "\"" + ":" + CurrentEvent.Sum;
-            //    }
-            //    if (CurrentEvent.UsingSegmentation)
-            //    {
-            //        data += ",";
-            //        data += "\"" + "segmentation" + "\"" + ":" + "{";
-
-            //        bool First2 = true;
-            //        foreach (String CurrentKey in CurrentEvent.Segmentation.Keys)
-            //        {
-            //            if (First2)
-            //            {
-            //                First2 = false;
-            //            }
-            //            else
-            //            {
-            //                data += ",";
-            //            }
-            //            data += "\"" + CurrentKey + "\"" + ":" + "\"" + CurrentEvent.Segmentation[CurrentKey] + "\"";
-            //        }
-
-            //        data += "}";
-            //    }
-            //    data += "}";
-            //}
-
-            //data += "]";
 
             queue.Enqueue(data);
         }
@@ -464,86 +345,6 @@ namespace Countly
             {
                 WakeUpWorker.Set();
             }
-
-//            thread = new Thread(new ThreadStart(() =>
-//                {
-//                    string data = string.Empty;
-//                    ManualResetEvent signal = new ManualResetEvent(false);
-
-//                    while (!StopThread)
-//                    {
-//                        try
-//                        {
-//                            data = queue.Peek();
-
-//                            WebClient client = new WebClient();
-//                            client.OpenReadCompleted += new OpenReadCompletedEventHandler((object sender, OpenReadCompletedEventArgs args) =>
-//                                {
-//                                    try
-//                                    {
-//                                        if (args.Error != null)
-//                                        {
-//                                            throw args.Error;
-//                                        }
-
-//                                        args.Result.Close();
-//#if (DEBUG)
-//                                        Debug.WriteLine("Countly:\t" + "ok -> " + data);
-//#endif
-//                                        queue.Dequeue();
-//                                    }
-//                                    catch (Exception E)
-//                                    {
-//#if (DEBUG)
-//                                        Debugger.Break();
-
-//                                        if (E is WebException)
-//                                        {
-//                                            Debug.WriteLine("Countly:\t" + (E as WebException).Message + "\t" + (E as WebException).Status);
-//                                        }
-//#endif
-//                                    }
-//                                    finally
-//                                    {
-//                                        signal.Set(); // Allow working thread to continue
-//                                    }
-//                                });
-
-//                            signal.Reset();
-
-//                            client.OpenReadAsync(new Uri(ServerURL + "/i?" + data));
-
-//                            signal.WaitOne(); // Block thread until 'OpenReadCompleted' method has completed
-//                        }
-//                        catch (Exception E)
-//                        {
-//                            if (E is ThreadAbortException)
-//                            {
-//#if (DEBUG)
-//                                Debug.WriteLine("Countly:\t" + "Worker thread abort recieved and respected");
-//#endif
-//                                return;
-//                            }
-
-//                            if (E is InvalidOperationException)
-//                            {
-//                                //return;
-//                            }
-
-//#if (DEBUG)
-//                            Debug.WriteLine("Countly:\t" + E.ToString());
-//                            Debug.WriteLine("Countly:\t" + "error -> " + data);
-//#endif
-//                            break;
-//                        }
-//                        finally
-//                        {
-//                            data = string.Empty;
-//                        }
-//                    }
-//                }));
-
-
         }
     }
 

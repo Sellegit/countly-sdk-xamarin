@@ -8,21 +8,21 @@ namespace Countly
 {
 	public partial class DeviceInfo
 	{
-		#if __ANDROID__
+#if __ANDROID__
 		Context context;
 		public DeviceInfo(Context _context) 
 		{
 			context = _context;
 			Init();
 		}
-		#endif
+#endif
 
-		#if __IOS__
+#if __IOS__
 		public DeviceInfo()
 		{
 			Init ();
 		}
-		#endif
+#endif
 
 		public string UDID {get;private set;}
 
@@ -66,22 +66,13 @@ namespace Countly
 		}
 		string getMetrics()
 		{
-			string output;
-
-			//output = "{";
-			//output +=       "\"" + "_device" +     "\"" + ":" + "\"" + getDevice() +       "\"";
-			//output += "," + "\"" + "_os" +          "\"" + ":" + "\"" + getOS() +           "\"";
-			//output += "," + "\"" + "_os_version" +  "\"" + ":" + "\"" + getOSVersion() +    "\"";
-			//output += "," + "\"" + "_carrier" +     "\"" + ":" + "\"" + getCarrier() +      "\"";
-			//output += "," + "\"" + "_resolution" +  "\"" + ":" + "\"" + getResolution() +   "\"";
-			//output += "," + "\"" + "_local" +       "\"" + ":" + "\"" + getLocal() +        "\"";
-			//output += "}";
-
-			output = JsonConvert.SerializeObject(new MetricsClass(this), Formatting.None, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
-
-			//output = HttpUtility.UrlEncode(output);
-
-			return output;
+			return JsonConvert.SerializeObject(
+				new MetricsClass(this), 
+				Formatting.None, 
+				new JsonSerializerSettings() { 
+					NullValueHandling = NullValueHandling.Ignore 
+				}
+			);
 		}
 
 	}
