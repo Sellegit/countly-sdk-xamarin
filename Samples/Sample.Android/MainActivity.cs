@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Android.App;
 using Android.Content;
 using Android.Runtime;
@@ -47,5 +46,3 @@ namespace Sample.Android
 		}
 	}
 }
-
-

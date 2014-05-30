@@ -25,24 +25,15 @@ namespace Countly
 #endif
 
 		public string UDID {get;private set;}
-
 		public string OS { get; private set;}
-
 		public string OSVersion {get;private set;}
-
 		public string DeviceName {get;set;}
-
 		public string Resulution {get;set;}
-
 		public string Carrier {get;set;}
-
 		public string Local {get;set;}
-
 		public string Metrics {get;set;}
-
 		public string AppVersion {get;set;}
 
-		
 		private class MetricsClass
 		{
 			public String _device { get; set; }
@@ -64,6 +55,7 @@ namespace Countly
 				_app_version = info.AppVersion;
 			}
 		}
+
 		string getMetrics()
 		{
 			return JsonConvert.SerializeObject(
@@ -74,7 +66,5 @@ namespace Countly
 				}
 			);
 		}
-
 	}
 }
-

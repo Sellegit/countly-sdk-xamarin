@@ -15,32 +15,32 @@ namespace Countly
 			DeviceName = DeviceHardware.DeviceVersion;
 			OS = "iOS";
 			OSVersion = UIDevice.CurrentDevice.SystemVersion;
-			var prov = new CTTelephonyNetworkInfo ().SubscriberCellularProvider;
-			Carrier =  prov == null ? "Unknown" :  prov.CarrierName;
-			UDID = GetUid ();
+			var prov = new CTTelephonyNetworkInfo().SubscriberCellularProvider;
+			Carrier = prov == null ? "Unknown" : prov.CarrierName;
+			UDID = GetUid();
 
 			var bounds = UIScreen.MainScreen.Bounds;
 			var scale = UIScreen.MainScreen.Scale;
 			bounds.Width *= scale;
-			bounds.Height *=scale;
-			Resulution = string.Format("{0}x{1}",bounds.Width,bounds.Height);
+			bounds.Height *= scale;
+			Resulution = string.Format("{0}x{1}", bounds.Width, bounds.Height);
 
 			Local = NSLocale.CurrentLocale.LocaleIdentifier;
 			AppVersion = NSBundle.MainBundle.InfoDictionary.ObjectForKey(new NSString("CFBundleVersion")).ToString();
 
-			Metrics = getMetrics ();
-
+			Metrics = getMetrics();
 		}
 
 		string GetUid()
 		{
-			var verson = Version.Parse (UIDevice.CurrentDevice.SystemVersion);
-			if(verson.Major >= 6)
+			var verson = Version.Parse(UIDevice.CurrentDevice.SystemVersion);
+			if (verson.Major >= 6)
 				return (ASIdentifierManager.SharedManager.AdvertisingIdentifier as NSUuid).AsString();
-			try{
-			return OpenUDID.Value;
-			}
-			catch(Exception ex) {
+
+			try {
+				return OpenUDID.Value;
+			} 
+			catch (Exception ex) {
 				return "";
 			}
 		}
@@ -59,18 +59,16 @@ namespace Countly
 		public const string HardwareProperty = "hw.machine";
 
 		[DllImport(Constants.SystemLibrary)]
-		internal static extern int sysctlbyname([MarshalAs(UnmanagedType.LPStr)] string property, // name of the property
-		                                        IntPtr output, // output
-		                                        IntPtr oldLen, // IntPtr.Zero
-		                                        IntPtr newp, // IntPtr.Zero
-		                                        uint newlen // 0
-		                                        );
+		internal static extern int sysctlbyname(
+			[MarshalAs(UnmanagedType.LPStr)] string property, // name of the property
+            IntPtr output, // output
+            IntPtr oldLen, // IntPtr.Zero
+            IntPtr newp, // IntPtr.Zero
+            uint newlen // 0
+		);
 
-
-
-		public static string DeviceVersion
-		{
-			get{
+		public static string DeviceVersion {
+			get {
 				// get the length of the string that will be returned
 				var pLen = Marshal.AllocHGlobal(sizeof(int));
 				sysctlbyname(DeviceHardware.HardwareProperty, IntPtr.Zero, pLen, IntPtr.Zero, 0);
@@ -78,12 +76,10 @@ namespace Countly
 				var length = Marshal.ReadInt32(pLen);
 
 				// check to see if we got a length
-				if (length == 0)
-				{
+				if (length == 0) {
 					Marshal.FreeHGlobal(pLen);
 					return "Unknown";
 				}
-
 
 				// get the hardware string
 				var pStr = Marshal.AllocHGlobal(length);
@@ -99,4 +95,3 @@ namespace Countly
 		}
 	}
 }
-

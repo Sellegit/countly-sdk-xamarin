@@ -19,13 +19,11 @@ namespace Sample.iOS
 		}
 	}
 
-	
 	[Register("MyUIApp")]
 	public class MyUIApp : UIApplication
 	{
 		public override void SendEvent (UIEvent theEvent)
 		{
-		
 //			Console.WriteLine (theEvent);
 //			
 //			Console.WriteLine (theEvent.Subtype);
@@ -52,7 +50,7 @@ namespace Sample.iOS
 //					break;
 //				}
 //			} else 
-				base.SendEvent (theEvent);
+			base.SendEvent (theEvent);
 		}
 	}
 }
