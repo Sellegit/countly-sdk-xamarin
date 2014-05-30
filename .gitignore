@@ -5,6 +5,7 @@
 *.userprefs
 *.resources
 bin/
+Bin/
 obj/
 .DS_Store
 test-results
