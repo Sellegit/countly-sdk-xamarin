@@ -71,9 +71,7 @@ namespace Countly
 			queue.setAppKey(appKey);
 			queue.setDeviceInfo(context);
 		}
-#endif
-
-#if __IOS__
+#else
         public void init(string serverURL, string appKey)
         {
             queue.setServerURL(serverURL);
@@ -200,19 +198,17 @@ namespace Countly
             ServerURL = input.TrimEnd('/');
         }
 
-		#if __ANDROID__
+#if __ANDROID__
 		public void setDeviceInfo(Context context)
 		{
 			deviceInfo = new DeviceInfo(context);
 		}
-		#endif
-
-		#if __IOS__
+#else
 		public void setDeviceInfo()
 		{
 			deviceInfo = new DeviceInfo();
 		}
-		#endif
+#endif
 
         public void beginSession()
         {

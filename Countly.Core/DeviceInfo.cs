@@ -15,9 +15,7 @@ namespace Countly
 			context = _context;
 			Init();
 		}
-#endif
-
-#if __IOS__
+#else
 		public DeviceInfo()
 		{
 			Init ();
