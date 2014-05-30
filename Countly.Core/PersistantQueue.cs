@@ -25,11 +25,9 @@ namespace Countly
 				{
 					using (var stream = myIsolatedStorage.OpenFile("countly-state", FileMode.OpenOrCreate))
 					{
-						{
-							var formatter = new BinaryFormatter();
-							queue = stream.Length > 0 ? (Queue<T>) formatter.Deserialize(stream) : new Queue<T>();
-							Console.WriteLine("Items to be synced:{0}", queue.Count);
-						}
+						var formatter = new BinaryFormatter();
+						queue = stream.Length > 0 ? (Queue<T>) formatter.Deserialize(stream) : new Queue<T>();
+						Console.WriteLine("Items to be synced:{0}", queue.Count);
 					}
 				}
 			}
