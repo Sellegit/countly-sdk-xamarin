@@ -1,4 +1,3 @@
-
 using System;
 using System.Net;
 using System.Web;
@@ -13,7 +12,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 // Please see http://support.count.ly/kb/reference/countly-server-api-reference
-using System.IO.IsolatedStorage;
+
+#if __ANDROID__
+using Android.Content;
+#endif
 
 namespace Countly
 {
@@ -37,7 +39,7 @@ namespace Countly
 
         private Countly()
         {
-            queue = new ConnectionQueue();
+			queue = new ConnectionQueue();
             eventqueue = new List<CountlyEvent>();
             timer = new Timer( new TimerCallback( ( object o ) =>
                 {
@@ -62,13 +64,23 @@ namespace Countly
                 Timeout.Infinite);
         }
 
+		#if __ANDROID__
+		public void init(Context context, string serverURL, string appKey)
+		{
+			queue.setServerURL(serverURL);
+			queue.setAppKey(appKey);
+			queue.setDeviceInfo(context);
+		}
+		#endif
+
+		#if __IOS__
         public void init(string serverURL, string appKey)
         {
             queue.setServerURL(serverURL);
             queue.setAppKey(appKey);
-            queue.AppVersion = DeviceInfo.Shared.AppVersion;
-			OnStart ();
+			queue.setDeviceInfo();
         }
+		#endif
 
         public void OnStart()
         {
@@ -177,7 +189,8 @@ namespace Countly
         //private volatile bool StopThread = false;
         private string AppKey;
         private string ServerURL;
-        public string AppVersion { private get; set; }
+
+		DeviceInfo deviceInfo;
 
         public void setAppKey(string input)
         {
@@ -189,14 +202,28 @@ namespace Countly
             ServerURL = input.TrimEnd('/');
         }
 
+		#if __ANDROID__
+		public void setDeviceInfo(Context context)
+		{
+			deviceInfo = new DeviceInfo(context);
+		}
+		#endif
+
+		#if __IOS__
+		public void setDeviceInfo()
+		{
+			deviceInfo = new DeviceInfo();
+		}
+		#endif
+
         public void beginSession()
         {
             string data;
             data = "app_key=" + AppKey;
-			data += "&" + "device_id=" + DeviceInfo.Shared.UDID;
+			data += "&" + "device_id=" + deviceInfo.UDID;
             data += "&" + "sdk_version=" + "1.0";
             data += "&" + "begin_session=" + "1";
-			data += "&" + "metrics=" + DeviceInfo.Shared.Metrics;
+			data += "&" + "metrics=" + deviceInfo.Metrics;
 
             queue.Enqueue(data);
 
@@ -207,7 +234,7 @@ namespace Countly
         {
             string data;
             data = "app_key=" + AppKey;
-			data += "&" + "device_id=" + DeviceInfo.Shared.UDID;
+			data += "&" + "device_id=" + deviceInfo.UDID;
             data += "&" + "session_duration=" + duration;
 
             queue.Enqueue(data);
@@ -219,7 +246,7 @@ namespace Countly
         {
             string data;
             data = "app_key=" + AppKey;
-			data += "&" + "device_id=" + DeviceInfo.Shared.UDID;
+			data += "&" + "device_id=" + deviceInfo.UDID;
             data += "&" + "end_session=" + "1";
             data += "&" + "session_duration=" + duration;
 
@@ -303,7 +330,7 @@ namespace Countly
         {
             string data = "";
             data += "app_key=" + AppKey;
-			data += "&" + "device_id=" + DeviceInfo.Shared.UDID;
+			data += "&" + "device_id=" + deviceInfo.UDID;
             data += "&" + "events=" + HttpUtility.UrlEncode(JsonConvert.SerializeObject(Events, Formatting.None, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore, ContractResolver = new CamelCasePropertyNamesContractResolver() }));
 
             //bool First1 = true;

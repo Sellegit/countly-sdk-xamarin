@@ -1,18 +1,28 @@
 using System;
 using Newtonsoft.Json;
+#if __ANDROID__
+using Android.Content;
+#endif
 
 namespace Countly
 {
 	public partial class DeviceInfo
 	{
-		static DeviceInfo shared;
-		public static DeviceInfo Shared { get{ return shared ?? (shared = new DeviceInfo()); }}
+		#if __ANDROID__
+		Context context;
+		public DeviceInfo(Context _context) 
+		{
+			context = _context;
+			Init();
+		}
+		#endif
 
-
+		#if __IOS__
 		public DeviceInfo()
 		{
 			Init ();
 		}
+		#endif
 
 		public string UDID {get;private set;}
 
