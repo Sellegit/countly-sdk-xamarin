@@ -11,7 +11,7 @@ using System.Windows;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-// Please see http://support.count.ly/kb/reference/countly-server-api-reference
+// Please see https://count.ly/resources/reference/server-api
 
 #if __ANDROID__
 using Android.Content;

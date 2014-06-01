@@ -22,15 +22,15 @@ namespace Countly
 		}
 #endif
 
-		public string UDID {get;private set;}
-		public string OS { get; private set;}
-		public string OSVersion {get;private set;}
-		public string DeviceName {get;set;}
-		public string Resolution {get;set;}
-		public string Carrier {get;set;}
-		public string Locale {get;set;}
-		public string Metrics {get;set;}
-		public string AppVersion {get;set;}
+		public string UDID { get; private set; }
+		public string OS { get; private set; }
+		public string OSVersion { get; private set; }
+		public string DeviceName { get; set; }
+		public string Resolution { get; set; }
+		public string Carrier { get; set; }
+		public string Locale { get; set; }
+		public string Metrics { get; set; }
+		public string AppVersion { get; set; }
 
 		private class MetricsClass
 		{
@@ -39,7 +39,7 @@ namespace Countly
 			public String _os_version { get; set; }
 			public String _carrier { get; set; }
 			public String _resolution { get; set; }
-			public String _local { get; set; }
+			public String _locale { get; set; }
 			public String _app_version { get; set; }
 
 			public MetricsClass(DeviceInfo info)
@@ -49,7 +49,7 @@ namespace Countly
 				_os_version = info.OSVersion;
 				_carrier = info.Carrier;
 				_resolution = info.Resolution;
-				_local = info.Locale;
+				_locale = info.Locale;
 				_app_version = info.AppVersion;
 			}
 		}
