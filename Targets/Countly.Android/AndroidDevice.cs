@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using Android.Content;
 using Android.Telephony;
 using Android.Views;
@@ -13,26 +12,32 @@ namespace Countly
 	{
 		public void Init()
 		{
-			var telephonyManager = (TelephonyManager)context.GetSystemService(Context.TelephonyService);
-
-			UDID = telephonyManager.DeviceId;
 			DeviceName = Build.Model;
 			OS = "Android";
 			OSVersion = Build.VERSION.Release;
-			Carrier = telephonyManager.NetworkOperatorName;
+			Resolution = GetResolution();
+			Locale = Java.Util.Locale.Default.ToString();
+			AppVersion = context.PackageManager.GetPackageInfo(context.PackageName, 0).VersionName;
 
+			var telephonyManager = (TelephonyManager)context.GetSystemService(Context.TelephonyService);
+			UDID = telephonyManager == null ? "Unknown" : telephonyManager.DeviceId;
+			Carrier = telephonyManager == null ? "Unknown" : telephonyManager.NetworkOperatorName;
+
+			Metrics = getMetrics ();
+		}
+
+		string GetResolution()
+		{
 			var windowManager = context.GetSystemService(Context.WindowService).JavaCast<IWindowManager>(); 
+			if (windowManager == null)
+				return "Unknown";
+
 			var display = windowManager.DefaultDisplay;
 
 			var displayMetrics = new DisplayMetrics();
 			display.GetMetrics(displayMetrics);
 
-			Resulution = string.Format("{0}x{1}", displayMetrics.WidthPixels, displayMetrics.HeightPixels);
-
-			Local = RegionInfo.CurrentRegion.Name;
-			AppVersion = context.PackageManager.GetPackageInfo(context.PackageName, 0).VersionName;
-
-			Metrics = getMetrics ();
+			return string.Format("{0}x{1}", displayMetrics.WidthPixels, displayMetrics.HeightPixels);
 		}
 	}
 }

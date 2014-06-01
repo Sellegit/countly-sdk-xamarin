@@ -23,9 +23,9 @@ namespace Countly
 			var scale = UIScreen.MainScreen.Scale;
 			bounds.Width *= scale;
 			bounds.Height *= scale;
-			Resulution = string.Format("{0}x{1}", bounds.Width, bounds.Height);
+			Resolution = string.Format("{0}x{1}", bounds.Width, bounds.Height);
 
-			Local = NSLocale.CurrentLocale.LocaleIdentifier;
+			Locale = NSLocale.CurrentLocale.LocaleIdentifier;
 			AppVersion = NSBundle.MainBundle.InfoDictionary.ObjectForKey(new NSString("CFBundleVersion")).ToString();
 
 			Metrics = getMetrics();
@@ -41,7 +41,7 @@ namespace Countly
 				return OpenUDID.Value;
 			} 
 			catch (Exception ex) {
-				return "";
+				return "Unknown";
 			}
 		}
 	}

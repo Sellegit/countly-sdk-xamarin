@@ -15,18 +15,18 @@ namespace Sample.iOS
 		{
 			Countly.Countly.SharedInstance.init("http://cloud.count.ly", "82b4cbd21e8a1a11e071ae2e6b8c0c9c50ef0417");
 
-			NSNotificationCenter.DefaultCenter.AddObserver(null, (notifiction) => {
-				Console.WriteLine(notifiction.Name);
+			NSNotificationCenter.DefaultCenter.AddObserver(null, (notification) => {
+				Console.WriteLine(notification.Name);
 			});
 
-			NSNotificationCenter.DefaultCenter.AddObserver("UINavigationControllerDidShowViewControllerNotification", (notifiction) => {
-				var vc = notifiction.UserInfo["UINavigationControllerNextVisibleViewController"] as UIViewController;
+			NSNotificationCenter.DefaultCenter.AddObserver("UINavigationControllerDidShowViewControllerNotification", (notification) => {
+				var vc = notification.UserInfo["UINavigationControllerNextVisibleViewController"] as UIViewController;
 				Countly.Countly.SharedInstance.PostEvent(new Countly.Countly.CountlyEvent {
 					Key = "Page View",
 					Count = 1,
 					Segmentation = new Dictionary<string,string> {
-						{ "VC Type",vc.GetType().Name },
-						{ "Page Title",vc.Title },
+						{ "VC Type", vc.GetType().Name },
+						{ "Page Title", vc.Title },
 					},
 				});
 

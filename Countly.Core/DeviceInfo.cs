@@ -26,9 +26,9 @@ namespace Countly
 		public string OS { get; private set;}
 		public string OSVersion {get;private set;}
 		public string DeviceName {get;set;}
-		public string Resulution {get;set;}
+		public string Resolution {get;set;}
 		public string Carrier {get;set;}
-		public string Local {get;set;}
+		public string Locale {get;set;}
 		public string Metrics {get;set;}
 		public string AppVersion {get;set;}
 
@@ -48,8 +48,8 @@ namespace Countly
 				_os = info.OS;
 				_os_version = info.OSVersion;
 				_carrier = info.Carrier;
-				_resolution = info.Resulution;
-				_local = info.Local;
+				_resolution = info.Resolution;
+				_local = info.Locale;
 				_app_version = info.AppVersion;
 			}
 		}
