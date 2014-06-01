@@ -8,6 +8,9 @@ using System.Runtime.InteropServices;
 
 namespace Countly
 {
+	/// <summary>
+	/// This Partial class is compiled into the partial Countly.Core.DeviceInfo when referencing the Countly.iOS library.
+	/// </summary>
 	public partial class DeviceInfo
 	{
 		public void Init()

@@ -24,25 +24,29 @@ namespace Sample.Android
 			// Get our button from the layout resource,
 			// and attach an event to it
 			Button button = FindViewById<Button>(Resource.Id.myButton);
-			
+
 			button.Click += delegate {
 				button.Text = string.Format("{0} clicks!", count++);
+				Countly.Countly.SharedInstance.PostEvent(new Countly.Countly.CountlyEvent {
+					Key = "Button Click",
+					Count = 1
+				});
 			};
 		}
 
 		protected override void OnStart()
 		{
-			base.OnStart();
-
 			Countly.Countly.SharedInstance.init(this.ApplicationContext, "http://cloud.count.ly", "82b4cbd21e8a1a11e071ae2e6b8c0c9c50ef0417");
 			Countly.Countly.SharedInstance.OnStart();
+
+			base.OnStart();
 		}
 
 		protected override void OnStop()
 		{
-			base.OnStop();
-
 			Countly.Countly.SharedInstance.OnStop();
+
+			base.OnStop();
 		}
 	}
 }

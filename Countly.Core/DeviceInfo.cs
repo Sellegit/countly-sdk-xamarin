@@ -6,6 +6,10 @@ using Android.Content;
 
 namespace Countly
 {
+	/// <summary>
+	/// This partial class will be compiled into with the corresponding platform's partial class (currently in AndroidDevice.cs or iOSDevice.cs).
+	/// So, calling Init() below from an Android project will run the Init() in Countly.Android.AndroidDevice.cs.
+	/// </summary>
 	public partial class DeviceInfo
 	{
 #if __ANDROID__
