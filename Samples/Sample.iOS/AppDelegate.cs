@@ -13,7 +13,7 @@ namespace Sample.iOS
 
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
-			Countly.Countly.SharedInstance.init("http://cloud.count.ly", "82b4cbd21e8a1a11e071ae2e6b8c0c9c50ef0417");
+			Countly.Countly.SharedInstance.init("YOUR_SERVER", "YOUR_APP_KEY");
 			Countly.Countly.SharedInstance.OnStart();
 
 			NSNotificationCenter.DefaultCenter.AddObserver(null, (notification) => {

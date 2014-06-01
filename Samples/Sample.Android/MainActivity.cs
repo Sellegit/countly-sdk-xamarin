@@ -36,7 +36,7 @@ namespace Sample.Android
 
 		protected override void OnStart()
 		{
-			Countly.Countly.SharedInstance.init(this.ApplicationContext, "http://cloud.count.ly", "82b4cbd21e8a1a11e071ae2e6b8c0c9c50ef0417");
+			Countly.Countly.SharedInstance.init(this.ApplicationContext, "YOUR_SERVER", "YOUR_APP_KEY");
 			Countly.Countly.SharedInstance.OnStart();
 
 			base.OnStart();
